@@ -200,8 +200,13 @@
 		// reliable regardless of locale. Fallback to country if
 		// we do not receive it (iOS 8 sometimes)
 		self.countryCode = [contact.postalAddress.ISOCountryCode length] ? contact.postalAddress.ISOCountryCode : nil;
-		if (self.countryCode == nil) {
+		if (![self.countryCode length]) {
 			self.country = contact.postalAddress.country;
+			if (![self.country length]) {
+				// In some cases contact is missing country & countryCode values, BUT it's displayed as United States
+				// I assumed that this value falls back to the locale country
+				self.countryCode = [[NSLocale.currentLocale objectForKey:NSLocaleCountryCode] lowercaseString];
+			}
 		}
 	}
 
