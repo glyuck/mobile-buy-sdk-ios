@@ -35,6 +35,7 @@
 #import "BUYModelManager+ApplePay.h"
 #import "BUYShop.h"
 #import "BUYShopifyErrorCodes.h"
+#import "BUYClient+Internal.h"
 
 const NSTimeInterval PollDelay = 0.5;
 
@@ -198,7 +199,15 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 		}
 		else {
 			self.lastError = error;
-			completion(PKPaymentAuthorizationStatusInvalidShippingPostalAddress);
+			if (error.domain == BUYShopifyErrorDomain
+					&& error.code == 422
+					&& [error.userInfo[@"errors"] isKindOfClass:[NSDictionary class]]
+					&& [error.userInfo[@"errors"][@"checkout"] isKindOfClass:[NSDictionary class]]
+					&& [error.userInfo[@"errors"][@"checkout"][@"billing_address"] isKindOfClass:[NSDictionary class]]) {
+				completion(PKPaymentAuthorizationStatusInvalidBillingPostalAddress);
+			} else {
+				completion(PKPaymentAuthorizationStatusInvalidShippingPostalAddress);
+			}
 		}
 	}];
 }
