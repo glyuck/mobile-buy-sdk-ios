@@ -95,6 +95,15 @@ extern NSString *const BUYPaymentProviderDidCompleteCheckoutNotificationKey;
 - (void)paymentProviderDidDismissCheckout:(id <BUYPaymentProvider>)provider;
 
 /**
+ *  Called when the user has changed shipping address
+ *
+ *  @param provider   the `BUYPaymentProvider`
+ *  @param contact    the selected shipping contact
+ *  @returns can return NO to forbid shipping to this address
+ */
+- (BOOL)paymentProvider:(id <BUYPaymentProvider>)provider didSelectShippingContact:(PKContact *)contact;
+
+/**
  *  Called when a checkout payment operation has failed
  *
  *  @param provider   the `BUYPaymentProvider`

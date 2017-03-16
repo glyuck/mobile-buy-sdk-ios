@@ -340,6 +340,11 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 
 - (void)paymentAuthorizationController:(PKPaymentAuthorizationController *)controller didSelectShippingContact:(PKContact *)contact completion:(BUYAddressUpdateCompletion)completion
 {
+    if ([self.delegate respondsToSelector:@selector(paymentProvider:didSelectShippingContact:)]
+            && ![self.delegate paymentProvider:self didSelectShippingContact:contact]) {
+        completion(PKPaymentAuthorizationStatusInvalidShippingPostalAddress, @[], self.checkout.buy_summaryItems);
+        return;
+    }
 	[self.applePayAuthorizationDelegate paymentAuthorizationController:controller didSelectShippingContact:contact completion:^(PKPaymentAuthorizationStatus status, NSArray<PKShippingMethod *> * _Nonnull shippingMethods, NSArray<PKPaymentSummaryItem *> * _Nonnull summaryItems) {
 		[self paymentAuthorizationDidUpdateAddressWithStatus:status];
 		completion(status, shippingMethods, summaryItems);
@@ -380,6 +385,11 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact completion:(BUYAddressUpdateCompletion)completion
 {
+    if ([self.delegate respondsToSelector:@selector(paymentProvider:didSelectShippingContact:)]
+        && ![self.delegate paymentProvider:self didSelectShippingContact:contact]) {
+        completion(PKPaymentAuthorizationStatusInvalidShippingContact, @[], self.checkout.buy_summaryItems);
+        return;
+    }
 	[self.applePayAuthorizationDelegate paymentAuthorizationViewController:controller didSelectShippingContact:contact completion:^(PKPaymentAuthorizationStatus status, NSArray<PKShippingMethod *> * _Nonnull shippingMethods, NSArray<PKPaymentSummaryItem *> * _Nonnull summaryItems) {
 		[self paymentAuthorizationDidUpdateAddressWithStatus:status];
 		completion(status, shippingMethods, summaryItems);
