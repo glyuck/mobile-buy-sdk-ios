@@ -270,7 +270,9 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 - (void)updateShippingRatesCompletion:(BUYAddressUpdateCompletion)completion
 {
 	[self.client getShippingRatesForCheckoutWithToken:self.checkout.token completion:^(NSArray *shippingRates, BUYStatus status, NSError *error) {
-		
+		if (self.filterShippingRates) {
+			shippingRates = self.filterShippingRates(self.checkout, shippingRates);
+		}
 		self.shippingRates = shippingRates;
 		NSArray *shippingMethods = [BUYShippingRate buy_convertShippingRatesToShippingMethods:shippingRates];
 		

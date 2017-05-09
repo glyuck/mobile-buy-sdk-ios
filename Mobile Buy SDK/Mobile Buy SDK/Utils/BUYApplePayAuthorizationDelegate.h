@@ -71,6 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly) NSString *shopName;
 
+@property (nonatomic, strong) NSArray<BUYShippingRate *> *(^filterShippingRates)(BUYCheckout *checkout, NSArray<BUYShippingRate *> *shippingRates);
+
 @end
 
 NS_ASSUME_NONNULL_END

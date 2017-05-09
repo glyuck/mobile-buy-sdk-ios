@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const BUYApplePayPaymentProviderId;
 
 @class BUYClient;
+@class BUYShippingRate;
 
 @interface BUYApplePayPaymentProvider : NSObject <BUYPaymentProvider>
 
@@ -65,6 +66,7 @@ extern NSString *const BUYApplePayPaymentProviderId;
  */
 @property (nonatomic, assign) BOOL allowApplePaySetup;
 
+@property (nonatomic, strong) NSArray<BUYShippingRate *> *(^filterShippingRates)(BUYCheckout *checkout, NSArray<BUYShippingRate *> *shippingRates);
 /**
  *  Whether the device is setup to show the Apple Pay setup sheet.
  *  `allowApplePaySetup` must be set to YES, and the `merchantId` must also be set in addition to the
