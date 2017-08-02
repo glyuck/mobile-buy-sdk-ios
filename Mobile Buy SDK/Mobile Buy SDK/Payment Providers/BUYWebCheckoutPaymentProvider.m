@@ -178,12 +178,13 @@ static NSString *const WebCheckoutCustomerAccessToken = @"customer_access_token"
 - (NSURL *)authenticatedWebCheckoutURL:(NSURL *)url
 {
 	NSString *accessToken = self.client.customerToken.accessToken;
-	if (!accessToken.length) {
-		return url;
-	}
-	NSURLQueryItem *item = [NSURLQueryItem queryItemWithName:WebCheckoutCustomerAccessToken value:accessToken];
 	NSURLComponents *authenticatedComponents = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:YES];
-	authenticatedComponents.queryItems = authenticatedComponents.queryItems ? [authenticatedComponents.queryItems arrayByAddingObject:item] : @[item];
+	if (accessToken.length) {
+		NSURLQueryItem *item = [NSURLQueryItem queryItemWithName:WebCheckoutCustomerAccessToken value:accessToken];
+		authenticatedComponents.queryItems = authenticatedComponents.queryItems ? [authenticatedComponents.queryItems arrayByAddingObject:item] : @[item];
+	}
+	NSURLQueryItem *sourceItem = [NSURLQueryItem queryItemWithName:@"source" value:@"ios"];
+	authenticatedComponents.queryItems = authenticatedComponents.queryItems ? [authenticatedComponents.queryItems arrayByAddingObject:sourceItem] : @[sourceItem];
 	return authenticatedComponents.URL;
 }
 
