@@ -269,25 +269,29 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 
 - (void)updateShippingRatesCompletion:(BUYAddressUpdateCompletion)completion
 {
-	[self.client getShippingRatesForCheckoutWithToken:self.checkout.token completion:^(NSArray *shippingRates, BUYStatus status, NSError *error) {
-		if (self.filterShippingRates) {
-			shippingRates = self.filterShippingRates(self.checkout, shippingRates);
-		}
+	void (^onShippingRatesReceived)(NSArray *shippingRates) = ^void(NSArray *shippingRates) {
 		self.shippingRates = shippingRates;
 		NSArray *shippingMethods = [BUYShippingRate buy_convertShippingRatesToShippingMethods:shippingRates];
-		
+
 		if (shippingMethods.count > 0) {
-			
+
 			[self selectShippingMethod:shippingMethods[0] completion:^(BUYCheckout *checkout, NSError *error) {
 				if (checkout && !error) {
 					self.checkout = checkout;
 				}
 				completion(error ? PKPaymentAuthorizationStatusFailure : PKPaymentAuthorizationStatusSuccess, shippingMethods, [self.checkout buy_summaryItemsWithShopName:self.shopName]);
 			}];
-			
+
 		} else {
 			self.lastError = [NSError errorWithDomain:BUYShopifyError code:BUYShopifyError_NoShippingMethodsToAddress userInfo:nil];
 			completion(PKPaymentAuthorizationStatusInvalidShippingPostalAddress, @[], [self.checkout buy_summaryItemsWithShopName:self.shopName]);
+		}
+	};
+	[self.client getShippingRatesForCheckoutWithToken:self.checkout.token completion:^(NSArray *shippingRates, BUYStatus status, NSError *error) {
+		if (self.filterShippingRates) {
+			self.filterShippingRates(self.checkout, shippingRates, onShippingRatesReceived);
+		} else {
+			onShippingRatesReceived(shippingRates);
 		}
 	}];
 }
