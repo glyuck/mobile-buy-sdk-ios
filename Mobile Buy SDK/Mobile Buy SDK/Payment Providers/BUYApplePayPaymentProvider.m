@@ -197,6 +197,7 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 {
 	self.applePayAuthorizationDelegate = [[BUYApplePayAuthorizationDelegate alloc] initWithClient:self.client checkout:self.checkout shopName:self.shop.name];
 	self.applePayAuthorizationDelegate.filterShippingRates = self.filterShippingRates;
+	self.applePayAuthorizationDelegate.onDidAuthorizePayment = self.onDidAuthorizePayment;
 
 	PKPaymentRequest *request = [self paymentRequest];
 	request.paymentSummaryItems = [self.checkout buy_summaryItemsWithShopName:self.shop.name];

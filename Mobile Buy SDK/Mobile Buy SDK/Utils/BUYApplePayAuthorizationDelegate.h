@@ -32,6 +32,7 @@
 @class BUYShop;
 
 typedef void (^ShippingRatesCallback)(NSArray<BUYShippingRate *> *_Nonnull);
+typedef void (^OnDidAuthorizePaymentCallback)(PKPaymentAuthorizationStatus status);
 NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_WATCH
@@ -73,6 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSString *shopName;
 
 @property (nonatomic, strong) void (^filterShippingRates)(BUYCheckout *checkout, NSArray<BUYShippingRate *> *shippingRates, ShippingRatesCallback callback);
+@property (nonatomic, strong) void (^onDidAuthorizePayment)(BUYCheckout *checkout, OnDidAuthorizePaymentCallback callback);
 
 @end
 

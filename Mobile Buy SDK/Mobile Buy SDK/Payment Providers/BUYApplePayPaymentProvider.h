@@ -34,6 +34,7 @@ extern NSString *const BUYApplePayPaymentProviderId;
 @class BUYClient;
 @class BUYShippingRate;
 typedef void (^ShippingRatesCallback)(NSArray<BUYShippingRate *> *);
+typedef void (^OnDidAuthorizePaymentCallback)(PKPaymentAuthorizationStatus status);
 
 @interface BUYApplePayPaymentProvider : NSObject <BUYPaymentProvider>
 
@@ -68,6 +69,8 @@ typedef void (^ShippingRatesCallback)(NSArray<BUYShippingRate *> *);
 @property (nonatomic, assign) BOOL allowApplePaySetup;
 
 @property (nonatomic, strong) void (^filterShippingRates)(BUYCheckout *checkout, NSArray<BUYShippingRate *> *shippingRates, ShippingRatesCallback callback);
+
+@property (nonatomic, strong) void (^onDidAuthorizePayment)(BUYCheckout *checkout, OnDidAuthorizePaymentCallback callback);
 /**
  *  Whether the device is setup to show the Apple Pay setup sheet.
  *  `allowApplePaySetup` must be set to YES, and the `merchantId` must also be set in addition to the

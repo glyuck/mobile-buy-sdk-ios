@@ -183,19 +183,25 @@ typedef void (^BUYShippingMethodCompletion)(PKPaymentAuthorizationStatus, NSArra
 	[self.client updateCheckout:self.checkout completion:^(BUYCheckout *checkout, NSError *error) {
 		if (checkout && error == nil) {
 			self.checkout = checkout;
-			
-			id<BUYPaymentToken> token = [[BUYApplePayToken alloc] initWithPaymentToken:payment.token];
-			
-			//Now that the checkout is up to date, call complete.
-			[self.client completeCheckoutWithToken:checkout.token paymentToken:token completion:^(BUYCheckout *checkout, NSError *error) {
-				if (checkout && error == nil) {
-					self.checkout = checkout;
-					completion(PKPaymentAuthorizationStatusSuccess);
-				} else {
-					self.lastError = error;
-					completion(PKPaymentAuthorizationStatusFailure);
+			self.onDidAuthorizePayment(checkout, ^(PKPaymentAuthorizationStatus status) {
+				if (status != PKPaymentAuthorizationStatusSuccess) {
+					completion(status);
+					return;
 				}
-			}];
+
+				id<BUYPaymentToken> token = [[BUYApplePayToken alloc] initWithPaymentToken:payment.token];
+
+				//Now that the checkout is up to date, call complete.
+				[self.client completeCheckoutWithToken:checkout.token paymentToken:token completion:^(BUYCheckout *checkout, NSError *error) {
+					if (checkout && error == nil) {
+						self.checkout = checkout;
+						completion(PKPaymentAuthorizationStatusSuccess);
+					} else {
+						self.lastError = error;
+						completion(PKPaymentAuthorizationStatusFailure);
+					}
+				}];
+			});
 		}
 		else {
 			self.lastError = error;
