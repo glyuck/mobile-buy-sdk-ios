@@ -229,6 +229,7 @@ extension PaySession: PKPaymentAuthorizationControllerDelegate {
          ** We can then safely force-unwrap both contacts.
          */
         let authorization = PayAuthorization(
+            payment: payment,
             paymentData:     payment.token.paymentData,
             billingAddress:  PayAddress(with: payment.billingContact!),
             shippingAddress: PayAddress(with: payment.shippingContact!),
