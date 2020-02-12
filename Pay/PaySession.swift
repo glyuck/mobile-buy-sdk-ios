@@ -188,7 +188,11 @@ public class PaySession: NSObject {
         request.currencyCode                  = currency.currencyCode
         request.merchantIdentifier            = merchantID
         request.requiredBillingAddressFields  = .all
-        request.requiredShippingAddressFields = .all
+        if checkout.needsShipping {
+            request.requiredShippingAddressFields = .all
+        } else {
+            request.requiredShippingAddressFields = []
+        }
         request.supportedNetworks             = self.acceptedCardBrands.paymentNetworks
         request.merchantCapabilities          = [.capability3DS]
         request.paymentSummaryItems           = checkout.summaryItems(for: self.shopName)
@@ -232,7 +236,7 @@ extension PaySession: PKPaymentAuthorizationControllerDelegate {
             payment: payment,
             paymentData:     payment.token.paymentData,
             billingAddress:  PayAddress(with: payment.billingContact!),
-            shippingAddress: PayAddress(with: payment.shippingContact!),
+            shippingAddress: payment.shippingContact == nil ? PayAddress() : PayAddress(with: payment.shippingContact!),
             shippingRate:    shippingRate
         )
         
